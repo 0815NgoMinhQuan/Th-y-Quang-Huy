@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách cảnh báo</title>
+</head>
+<body>
+    <h1>Danh sách cảnh báo</h1>
+    <ul>
+        {% for alert in alerts %}
+            <li>{{ alert[1] }} ({{ alert[2] }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Thêm cảnh báo mới</h2>
+    <form method="POST" action="{{ url_for('add_alert') }}">
+        <label for="message">Nội dung cảnh báo:</label>
+        <textarea id="message" name="message" required></textarea>
+        <br>
+        <button type="submit">Thêm cảnh báo</button>
+    </form>
+</body>
+</html>
