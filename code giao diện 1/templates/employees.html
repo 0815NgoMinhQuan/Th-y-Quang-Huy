@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}Quản lý nhân viên{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Bảng điều khiển - Quản lý nhân viên</h2>
+
+<!-- Thanh tìm kiếm -->
+<div class="card p-3 mb-4">
+  <div class="row g-2">
+    <div class="col-md-3">
+      <input type="text" id="searchId" class="form-control" placeholder="Tìm theo ID">
+    </div>
+    <div class="col-md-3">
+      <input type="text" id="searchName" class="form-control" placeholder="Tìm theo Tên">
+    </div>
+    <div class="col-md-3">
+      <input type="text" id="searchDept" class="form-control" placeholder="Tìm theo Phòng ban">
+    </div>
+    <div class="col-md-3">
+      <input type="text" id="searchTitle" class="form-control" placeholder="Tìm theo Chức danh">
+    </div>
+  </div>
+</div>
+
+<!-- Danh sách nhân viên -->
+<div class="card">
+  <div class="card-body">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th><th>Tên</th><th>Phòng ban</th><th>Chức danh</th><th>Trạng thái</th><th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTable">
+        {% for e in employees %}
+        <tr>
+          <td>{{ e[0] }}</td>
+          <td>{{ e[1] }}</td>
+          <td>{{ e[2] }}</td>
+          <td>{{ e[3] }}</td>
+          <td>{{ e[4] }}</td>
+          <td>
+            <a href="/edit-employee/{{ e[0] }}" class="btn btn-sm btn-primary">Sửa</a>
+            <a href="/delete-employee/{{ e[0] }}" class="btn btn-sm btn-danger">Xoá</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center">Không có nhân viên nào</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Nút thêm -->
+<div class="mt-3">
+  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Thêm nhân viên mới</button>
+</div>
+
+<!-- Modal Thêm -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm nhân viên mới</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addEmployeeForm" method="post" action="/add-employee">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <input name="name" type="text" class="form-control" placeholder="Họ và tên" required />
+            </div>
+            <div class="col-md-3">
+              <input name="department" type="text" class="form-control" placeholder="Phòng ban" required />
+            </div>
+            <div class="col-md-3">
+              <input name="title" type="text" class="form-control" placeholder="Chức danh" required />
+            </div>
+            <div class="col-md-3">
+              <select name="status" class="form-select" required>
+                <option value="">Trạng thái</option>
+                <option value="Đang làm">Đang làm</option>
+                <option value="Nghỉ việc">Nghỉ việc</option>
+              </select>
+            </div>
+            <div class="col-12 text-end">
+              <button type="submit" class="btn btn-primary">Thêm</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // TODO: fetch('/api/employees') để lấy dữ liệu động trong tương lai
+</script>
+{% endblock %}
