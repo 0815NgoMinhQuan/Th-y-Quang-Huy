@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">Thông báo và Cảnh báo</h3>
+
+  <!-- Danh sách thông báo -->
+  <ul class="list-group mb-4">
+    {% for alert in alerts %}
+      <li class="list-group-item list-group-item-{{ alert.type }}">
+        {{ alert.message }}
+      </li>
+    {% else %}
+      <li class="list-group-item text-muted">Không có thông báo nào.</li>
+    {% endfor %}
+  </ul>
+
+  <!-- Form gửi thông báo -->
+  <form method="post" action="/alerts">
+    <div class="form-group">
+      <textarea 
+        name="message" 
+        class="form-control" 
+        placeholder="Nhập thông báo..." 
+        rows="3" 
+        required></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger mt-2">Gửi Cảnh Báo</button>
+  </form>
+</div>
+{% endblock %}
+

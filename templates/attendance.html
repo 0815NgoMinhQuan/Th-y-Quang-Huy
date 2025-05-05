@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Chấm công</h3>
+<table class="table table-bordered">
+  <thead><tr><th>Employee ID</th><th>Ngày</th><th>Trạng thái</th></tr></thead>
+  <tbody>
+    {% for a in attendance %}
+    <tr>
+      <td>{{ a[0] }}</td><td>{{ a[1] }}</td><td>{{ a[2] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
