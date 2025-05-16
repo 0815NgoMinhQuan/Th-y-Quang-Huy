@@ -1,0 +1,178 @@
+<!-- templates/attendance.html -->
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bảng Chấm Công</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 0;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 12px 35px rgba(255, 105, 135, 0.3);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #ff4e50;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+        .form-inline {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        input[type="date"] {
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            border: 1.5px solid #ff6a88;
+            transition: all 0.3s ease;
+        }
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #ff4e50;
+            box-shadow: 0 0 8px #ff4e50aa;
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        thead th {
+            background: #ff6a88;
+            color: white;
+            padding: 12px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        tbody tr {
+            background: #fff0f6;
+            border-radius: 15px;
+            transition: background 0.3s ease;
+        }
+        tbody tr:hover {
+            background: #ffd3dc;
+        }
+        tbody td {
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .btn-success, .btn-danger {
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 6px 12px;
+            transition: transform 0.3s ease;
+        }
+        .btn-success:hover {
+            background-color: #3cba54;
+            transform: scale(1.1);
+        }
+        .btn-danger:hover {
+            background-color: #d9534f;
+            transform: scale(1.1);
+        }
+        .alert {
+            max-width: 600px;
+            margin: 0 auto 1rem auto;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        @media (max-width: 600px) {
+            .form-inline {
+                flex-direction: column;
+                align-items: center;
+            }
+            table {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Bảng Chấm Công - {{ selected_date.strftime('%d/%m/%Y') }}</h2>
+
+    <!-- Chọn ngày -->
+    <form method="get" class="form-inline mb-4" action="{{ url_for('attendance') }}">
+        <label for="date" class="form-label">Chọn ngày:</label>
+        <input type="date" id="date" name="date" value="{{ selected_date }}" required />
+        <button type="submit" class="btn btn-primary">Xem</button>
+    </form>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else ('warning' if category == 'warning' else 'danger') }} alert-dismissible fade show" role="alert">
+            {{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Bảng chấm công -->
+    <table>
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Họ & Tên</th>
+                <th>Ngày</th>
+                <th>Giờ Vào</th>
+                <th>Giờ Ra</th>
+                <th>Số Giờ Làm</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if attendance %}
+                {% for record in attendance %}
+                <tr>
+                    <td>{{ record.EmployeeID }}</td>
+                    <td>{{ record.FirstName }} {{ record.LastName }}</td>
+                    <td>{{ record.Date.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ record.ClockInTime.strftime('%H:%M:%S') if record.ClockInTime else '-' }}</td>
+                    <td>{{ record.ClockOutTime.strftime('%H:%M:%S') if record.ClockOutTime else '-' }}</td>
+                    <td>{{ "%.2f"|format(record.HoursWorked) if record.HoursWorked else '0.00' }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('clock_in', employee_id=record.EmployeeID) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm" {% if record.ClockInTime %}disabled{% endif %}>Điểm danh vào</button>
+                        </form>
+                        <form method="post" action="{{ url_for('clock_out', employee_id=record.EmployeeID) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" {% if not record.ClockInTime or record.ClockOutTime %}disabled{% endif %}>Điểm danh ra</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center;">Không có dữ liệu chấm công cho ngày này.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

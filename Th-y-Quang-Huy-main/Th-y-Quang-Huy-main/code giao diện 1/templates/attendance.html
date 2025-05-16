@@ -1,0 +1,98 @@
+<!-- templates/attendance.html -->
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chấm Công - Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <h2 class="mb-4 text-center">Bảng Chấm Công - {{ selected_date.strftime('%d/%m/%Y') }}</h2>
+
+        <!-- Form chọn ngày -->
+        <form method="get" action="{{ url_for('attendance') }}" class="mb-4 d-flex justify-content-center align-items-center gap-3">
+            <label for="date" class="form-label mb-0 fw-semibold">Chọn ngày:</label>
+            <input
+                type="date"
+                id="date"
+                name="date"
+                class="form-control w-auto"
+                value="{{ selected_date.strftime('%Y-%m-%d') }}"
+                required
+            />
+            <button type="submit" class="btn btn-primary">Xem</button>
+        </form>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-3">
+                    {% for category, message in messages %}
+                        <div
+                            class="alert alert-{{ 'success' if category == 'success' else ('warning' if category == 'warning' else 'danger') }} alert-dismissible fade show"
+                            role="alert"
+                        >
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Bảng chấm công -->
+        <table class="table table-striped table-bordered bg-white shadow-sm">
+            <thead class="table-dark text-center align-middle">
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Họ & Tên</th>
+                    <th>Ngày</th>
+                    <th>Giờ Vào</th>
+                    <th>Giờ Ra</th>
+                    <th>Số Giờ Làm</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if attendance %}
+                    {% for record in attendance %}
+                        <tr class="text-center align-middle">
+                            <td>{{ record.EmployeeID }}</td>
+                            <td>{{ record.FirstName }} {{ record.LastName }}</td>
+                            <td>{{ record.Date.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ record.ClockInTime.strftime('%H:%M:%S') if record.ClockInTime else '-' }}</td>
+                            <td>{{ record.ClockOutTime.strftime('%H:%M:%S') if record.ClockOutTime else '-' }}</td>
+                            <td>{{ "%.2f"|format(record.HoursWorked) if record.HoursWorked else '0.00' }}</td>
+                            <td class="d-flex justify-content-center gap-2">
+                                <!-- Nút điểm danh vào -->
+                                <form method="post" action="{{ url_for('clock_in', employee_id=record.EmployeeID) }}">
+                                    <button type="submit" class="btn btn-sm btn-success"
+                                        {% if record.ClockInTime %}disabled{% endif %}>
+                                        Điểm danh vào
+                                    </button>
+                                </form>
+                                <!-- Nút điểm danh ra -->
+                                <form method="post" action="{{ url_for('clock_out', employee_id=record.EmployeeID) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                        {% if not record.ClockInTime or record.ClockOutTime %}disabled{% endif %}>
+                                        Điểm danh ra
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center fst-italic">Không có dữ liệu chấm công cho ngày này.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS bundle (có Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

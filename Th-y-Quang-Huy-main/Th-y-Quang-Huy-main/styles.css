@@ -1,0 +1,49 @@
+/* Basic styling */
+body {
+    background-color: #f4f4f4;
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    text-align: center;
+}
+
+table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table td {
+    background-color: #ffffff;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-group input, .form-group select {
+    margin-bottom: 15px;
+}
+
+.btn {
+    margin-top: 10px;
+}
+
+/* Style for Action buttons */
+.btn-warning {
+    margin-right: 5px;
+}
+
+.btn-danger {
+    margin-left: 5px;
+}

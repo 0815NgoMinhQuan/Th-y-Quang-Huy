@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Employee Management - Sặc Sỡ Edition</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff9a8b, #ff6a88, #ffc3a0);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding-top: 40px;
+            color: #333;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(255, 106, 136, 0.5);
+            padding: 40px;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #d6336c;
+            text-shadow: 1px 1px 3px #ff6a88;
+            letter-spacing: 4px;
+        }
+
+        table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(255, 106, 136, 0.3);
+        }
+
+        thead {
+            background: linear-gradient(90deg, #ff6a88, #ff99ac);
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #ffe3e8;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fff0f6;
+        }
+
+        tbody tr:hover {
+            background-color: #ffb6c1;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        td, th {
+            padding: 15px 12px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .btn-warning {
+            background: #ff7e5f;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 10px #ff7e5faa;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            background: #feb47b;
+            color: #333;
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px #feb47baa;
+        }
+
+        .btn-danger {
+            background: #ff4e50;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 10px #ff4e50aa;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: #f9d423;
+            color: #333;
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px #f9d423aa;
+        }
+
+        form {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 3px solid #ff6a88;
+        }
+
+        .form-group label {
+            font-weight: 700;
+            color: #ff477e;
+        }
+
+        .form-control {
+            border-radius: 15px;
+            border: 2px solid #ff9a9e;
+            padding: 10px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px #ff6a88aa;
+        }
+
+        .form-control:focus {
+            border-color: #ff477e;
+            box-shadow: 0 0 8px #ff477eaa;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6a88, #ff99ac);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px #ff6a88bb;
+            display: block;
+            margin: 30px auto 0 auto;
+            width: 50%;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #ff99ac, #ff6a88);
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px #ff477ebb;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Employee List</h1>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Department</th><th>Title</th><th>Status</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.department }}</td>
+                <td>{{ employee.title }}</td>
+                <td>{{ employee.status }}</td>
+                <td>
+                    <a href="{{ url_for('update_employee', emp_id=employee.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_employee', emp_id=employee.id) }}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Bạn có chắc muốn xóa nhân viên này không?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form action="{{ url_for('add_employee') }}" method="POST" novalidate>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Enter employee name" required />
+        </div>
+        <div class="form-group">
+            <label for="department">Department:</label>
+            <input type="text" class="form-control" name="department" id="department" placeholder="Enter department" required />
+        </div>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" class="form-control" name="title" id="title" placeholder="Enter job title" required />
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select class="form-control" name="status" id="status" required>
+                <option value="" disabled selected>Select status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

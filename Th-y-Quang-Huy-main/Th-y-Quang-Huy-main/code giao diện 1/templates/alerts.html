@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Thông báo và cảnh báo</h3>
+<ul class="list-group">
+  {% for alert in alerts %}
+  <li class="list-group-item list-group-item-{{ alert.type }}">{{ alert.message }}</li>
+  {% endfor %}
+</ul>
+<form method="post" action="/alerts">
+  <textarea name="message" class="form-control mt-3" placeholder="Nhập thông báo..."></textarea>
+  <button class="btn btn-danger mt-2">Gửi cảnh báo</button>
+</form>
+{% endblock %}
+
